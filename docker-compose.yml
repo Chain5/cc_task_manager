@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?SECRET_KEY_BASE is required}
+      RAILS_LOG_TO_STDOUT: "true"
+    volumes:
+      # Persist the SQLite database across container restarts
+      - storage:/rails/storage
+    restart: unless-stopped
+
+volumes:
+  storage:

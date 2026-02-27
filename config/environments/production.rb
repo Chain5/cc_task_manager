@@ -13,6 +13,8 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
   config.log_tags = [:request_id]
 
+  config.active_storage.service = :local
+
   config.action_mailer.perform_caching = false
 
   config.i18n.fallbacks = true

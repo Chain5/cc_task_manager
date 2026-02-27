@@ -1,0 +1,8 @@
+first_comment:
+  body: This is a great task
+  task: todo_task
+  user: alice
+
+second_comment:
+  body: Still in progress
+  task: in_progress_task

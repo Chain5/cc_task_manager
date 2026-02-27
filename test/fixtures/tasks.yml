@@ -1,0 +1,20 @@
+todo_task:
+  title: Buy groceries
+  status: todo
+  priority: medium
+
+in_progress_task:
+  title: Write report
+  status: in_progress
+  priority: high
+
+done_task:
+  title: Read book
+  status: done
+  priority: low
+
+high_priority_task:
+  title: Fix critical bug
+  status: todo
+  priority: very_high
+  creator: alice

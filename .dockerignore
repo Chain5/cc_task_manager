@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Logs and temp files
+log/*
+tmp/*
+
+# SQLite databases (mounted as a volume in production)
+storage/*.sqlite3
+storage/*.sqlite3-*
+
+# Assets build artifacts (rebuilt inside Docker)
+node_modules
+
+# Test and CI artefacts
+coverage/
+
+# Editor / OS artefacts
+.DS_Store
+*.swp
+*.swo
+
+# Docker itself
+Dockerfile*
+.dockerignore
