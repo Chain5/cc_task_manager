@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Task Manager</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <%= link_to root_path, class: "logo" do %>
+          <span class="logo-mark">TM</span>
+          <span class="logo-text">Task<br>Manager</span>
+        <% end %>
+        <nav class="header-nav">
+          <%= link_to "All tasks", tasks_path, class: "nav-link" %>
+          <button class="btn btn--ghost btn--sm theme-toggle"
+                  data-controller="theme"
+                  data-action="click->theme#toggle"
+                  title="Toggle theme">☀</button>
+        </nav>
+      </div>
+    </header>
+
+    <% if notice %>
+      <div class="flash flash--notice" data-controller="flash"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="flash flash--toast" data-controller="flash"><%= alert %></div>
+    <% end %>
+
+    <main class="main-content">
+      <%= yield %>
+    </main>
+
+    <%# Custom confirm dialog — replaces native browser popup %>
+    <div id="tm-confirm" class="confirm-overlay" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <div class="confirm-icon">⚠</div>
+        <p id="tm-confirm-msg" class="confirm-msg"></p>
+        <div class="confirm-actions">
+          <button id="tm-confirm-ok"     class="btn btn--danger">Delete</button>
+          <button id="tm-confirm-cancel" class="btn btn--ghost">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <span>Task Manager &copy; <%= Date.current.year %> — Ruby <%= RUBY_VERSION %> / Rails <%= Rails.version %></span>
+    </footer>
+  </body>
+</html>

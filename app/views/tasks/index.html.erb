@@ -1,0 +1,64 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Your tasks</h1>
+    <p class="page-subtitle">Manage and track your team's activities</p>
+  </div>
+  <%= link_to new_task_path, class: "btn btn--primary" do %>
+    <span>+</span> New task
+  <% end %>
+</div>
+
+<% column_labels = { "todo" => "TO DO", "in_progress" => "IN PROGRESS", "done" => "COMPLETED" } %>
+
+<div class="kanban-board" data-controller="drag">
+  <% Task::STATUSES.each do |status| %>
+    <% tasks = @tasks_by_status[status] %>
+    <div class="kanban-column kanban-column--<%= status.tr("_", "-") %>"
+         data-controller="collapse"
+         data-status="<%= status %>"
+         data-action="dragover->drag#dragOver dragleave->drag#dragLeave drop->drag#drop">
+
+      <div class="kanban-column__header">
+        <span class="kanban-column__title"><%= column_labels[status] %></span>
+        <div class="kanban-column__header-right">
+          <span class="kanban-column__count"><%= tasks.count %></span>
+          <button class="collapse-btn"
+                  data-action="click->collapse#toggle"
+                  title="Collapse column">▾</button>
+        </div>
+      </div>
+
+      <div class="kanban-column__body">
+        <% tasks.each do |task| %>
+          <article class="task-card task-card--<%= task.status_css %>"
+                   draggable="true"
+                   data-task-id="<%= task.id %>"
+                   data-url="<%= task_path(task) %>"
+                   data-action="dragstart->drag#dragStart dragend->drag#dragEnd click->drag#cardClick">
+
+            <div class="task-card__header">
+              <span class="priority-badge <%= task.priority_css %>"><%= task.priority_label %></span>
+              <span class="task-date"><%= task.created_at.strftime("%-d %b %Y") %></span>
+            </div>
+
+            <h2 class="task-card__title">
+              <%= link_to task.title, task_path(task) %>
+            </h2>
+
+            <% if task.description.present? %>
+              <p class="task-card__desc"><%= truncate(task.description, length: 110) %></p>
+            <% end %>
+
+            <div class="task-card__footer">
+              <span class="task-meta">&#9679; <%= task.comments.count %> notes</span>
+            </div>
+          </article>
+        <% end %>
+
+        <% if tasks.empty? %>
+          <div class="kanban-empty">No tasks</div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

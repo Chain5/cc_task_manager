@@ -1,0 +1,102 @@
+<div class="task-detail">
+  <div class="breadcrumb">
+    <%= link_to "← All tasks", tasks_path %>
+  </div>
+
+  <div class="task-detail__header">
+    <div class="task-detail__meta">
+      <span class="status-badge status-badge--<%= @task.status_css %> status-badge--lg">
+        <%= @task.status_label %>
+      </span>
+      <span class="priority-badge priority-badge--lg <%= @task.priority_css %>">
+        <%= @task.priority_label %>
+      </span>
+      <span class="task-date">Created on <%= @task.created_at.strftime("%b %-d %Y, %H:%M") %></span>
+      <% if @task.updated_at != @task.created_at %>
+        <span class="task-date">Updated on <%= @task.updated_at.strftime("%b %-d %Y, %H:%M") %></span>
+      <% end %>
+    </div>
+
+    <div class="task-detail__actions">
+      <% if @task.can_advance? %>
+        <% next_label = Task::STATUS_LABELS[@task.next_status] %>
+        <%= button_to advance_status_task_path(@task), method: :patch, class: "btn btn--primary" do %>
+          Advance to "<%= next_label %>" →
+        <% end %>
+      <% else %>
+        <span class="badge-completed">✓ Completed</span>
+      <% end %>
+      <%= link_to "Edit", edit_task_path(@task), class: "btn btn--secondary" %>
+      <%= button_to "Delete", task_path(@task), method: :delete,
+            data: { turbo_confirm: "Permanently delete this task?" },
+            class: "btn btn--danger" %>
+    </div>
+  </div>
+
+  <div class="task-detail__body">
+    <h1 class="task-detail__title"><%= @task.title %></h1>
+    <% if @task.description.present? %>
+      <div class="task-detail__description">
+        <%= simple_format(@task.description) %>
+      </div>
+    <% else %>
+      <p class="task-no-desc">No description.</p>
+    <% end %>
+  </div>
+
+  <%# Progress indicator %>
+  <div class="status-progress">
+    <% Task::STATUSES.each_with_index do |status, idx| %>
+      <% is_reached = Task::STATUSES.index(@task.status) >= idx %>
+      <div class="progress-step <%= "progress-step--done" if is_reached %>">
+        <div class="progress-dot"></div>
+        <span class="progress-label"><%= Task::STATUS_LABELS[status] %></span>
+      </div>
+      <% unless idx == Task::STATUSES.length - 1 %>
+        <div class="progress-line <%= "progress-line--done" if Task::STATUSES.index(@task.status) > idx %>"></div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# Comments section %>
+<section class="comments-section">
+  <h2 class="comments-title">
+    Internal notes
+    <span class="comments-count"><%= @task.comments.count %></span>
+  </h2>
+
+  <% if @task.comments.any? %>
+    <div class="comments-list">
+      <% @task.comments.order(created_at: :asc).each do |comment| %>
+        <div class="comment">
+          <div class="comment__header">
+            <span class="comment__icon">◆</span>
+            <span class="comment__date"><%= comment.created_at.strftime("%-d %b %Y, %H:%M") %></span>
+            <%= button_to task_comment_path(@task, comment), method: :delete,
+                  class: "comment__delete",
+                  data: { turbo_confirm: "Delete this note?" },
+                  title: "Delete note" do %>
+              ✕
+            <% end %>
+          </div>
+          <p class="comment__body"><%= comment.body %></p>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="no-comments">No notes yet. Add the first one below.</p>
+  <% end %>
+
+  <div class="comment-form-wrapper">
+    <h3 class="comment-form-title">Add a note</h3>
+    <%= form_with model: [@task, @comment] do |f| %>
+      <div class="form-group">
+        <%= f.text_area :body, rows: 3,
+              placeholder: "Update, decision, blocker...",
+              class: "form-textarea" %>
+      </div>
+      <%= f.submit "Add note", class: "btn btn--primary" %>
+    <% end %>
+  </div>
+</section>

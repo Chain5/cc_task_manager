@@ -1,0 +1,48 @@
+<div class="form-card">
+  <%= form_with model: @task, class: "task-form" do |f| %>
+    <% if @task.errors.any? %>
+      <div class="form-errors">
+        <p class="form-errors__title">
+          <%= pluralize(@task.errors.count, "error prevented", "errors prevented") %> saving:
+        </p>
+        <ul>
+          <% @task.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :title, "Title *", class: "form-label" %>
+      <%= f.text_field :title,
+            placeholder: "e.g. Implement user authentication",
+            class: "form-input",
+            autofocus: true %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, "Description", class: "form-label" %>
+      <span class="form-hint">Optional — provide useful context for the team</span>
+      <%= f.text_area :description, rows: 5,
+            placeholder: "Describe the task in detail...",
+            class: "form-textarea" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :priority, "Priority", class: "form-label" %>
+      <%= f.select :priority,
+            Task::PRIORITIES.map { |p| [Task::PRIORITY_LABELS[p], p] },
+            { selected: @task.priority.presence || "medium" },
+            class: "form-input form-select" %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit @task.new_record? ? "Create task" : "Save changes",
+            class: "btn btn--primary btn--lg" %>
+      <%= link_to "Cancel",
+            @task.new_record? ? tasks_path : task_path(@task),
+            class: "btn btn--ghost btn--lg" %>
+    </div>
+  <% end %>
+</div>
