@@ -25,6 +25,53 @@ class TaskTest < ActiveSupport::TestCase
     assert task.errors[:status].any?
   end
 
+  # ── Status regression ─────────────────────────────────────────────────────
+
+  test "status cannot regress from in_progress to todo" do
+    task = tasks(:in_progress_task)
+    task.status = "todo"
+    assert_not task.valid?
+    assert task.errors[:status].any?
+  end
+
+  test "status cannot regress from done to in_progress" do
+    task = tasks(:done_task)
+    task.status = "in_progress"
+    assert_not task.valid?
+    assert task.errors[:status].any?
+  end
+
+  test "status cannot regress from done to todo" do
+    task = tasks(:done_task)
+    task.status = "todo"
+    assert_not task.valid?
+    assert task.errors[:status].any?
+  end
+
+  test "status can advance from todo to in_progress" do
+    task = tasks(:todo_task)
+    task.status = "in_progress"
+    assert task.valid?
+  end
+
+  test "status can advance from in_progress to done" do
+    task = tasks(:in_progress_task)
+    task.status = "done"
+    assert task.valid?
+  end
+
+  test "status regression validation only runs on update, not create" do
+    # A new task can be created with any valid status (e.g. seeding data)
+    task = Task.new(title: "Seed task", status: "done", priority: "medium")
+    assert task.valid?
+  end
+
+  test "updating status to the same value is allowed" do
+    task = tasks(:in_progress_task)
+    task.status = "in_progress"
+    assert task.valid?
+  end
+
   test "priority must be a known value" do
     task = build_task(priority: "super_ultra")
     assert_not task.valid?

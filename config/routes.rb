@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   get    "/signup", to: "registrations#new",       as: :signup
   post   "/signup", to: "registrations#create"
 
+  # User profile
+  resource :profile, only: %i[edit update]
+
   resources :tasks do
     resources :comments, only: %i[create destroy]
     member do

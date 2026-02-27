@@ -36,7 +36,7 @@ export default class extends Controller {
     const column = event.currentTarget
     column.classList.remove("drag-over")
 
-    const taskId = event.dataTransfer.getData("text/plain")
+    const taskId  = event.dataTransfer.getData("text/plain")
     const newStatus = column.dataset.status
     if (!taskId || !newStatus) return
 
@@ -47,10 +47,27 @@ export default class extends Controller {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
       },
       body: JSON.stringify({ status: newStatus })
-    }).then(response => {
+    }).then(async response => {
       if (response.ok) {
         window.Turbo.visit(window.location.href, { action: "replace" })
+      } else {
+        const data = await response.json().catch(() => ({}))
+        this.#showErrorToast(data.error || "Could not move task.")
       }
     })
+  }
+
+  // ── Private ───────────────────────────────────────────────────────────────
+
+  #showErrorToast(message) {
+    // Remove any previous drag-error toast so they don't stack
+    document.querySelector(".flash--toast[data-drag-toast]")?.remove()
+
+    const toast = document.createElement("div")
+    toast.className       = "flash flash--toast"
+    toast.dataset.controller = "flash"   // auto-dismiss via existing flash controller
+    toast.dataset.dragToast  = ""
+    toast.textContent     = message
+    document.body.appendChild(toast)
   }
 }

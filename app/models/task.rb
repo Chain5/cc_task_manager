@@ -42,6 +42,7 @@ class Task < ApplicationRecord
   validates :priority, inclusion: { in: PRIORITIES }
 
   before_validation :set_defaults, on: :create
+  validate :status_cannot_regress, on: :update
 
   scope :by_status, ->(status) { status.present? ? where(status: status) : all }
   scope :ordered, -> {
@@ -94,5 +95,12 @@ class Task < ApplicationRecord
   def set_defaults
     self.status   ||= "todo"
     self.priority ||= "medium"
+  end
+
+  def status_cannot_regress
+    return unless status_changed?
+    if STATUSES.index(status) < STATUSES.index(status_was)
+      errors.add(:status, "cannot go back from \"#{STATUS_LABELS[status_was]}\" to \"#{STATUS_LABELS[status]}\"")
+    end
   end
 end

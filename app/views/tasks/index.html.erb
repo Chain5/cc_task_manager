@@ -58,11 +58,6 @@
                     <span class="task-card__assignee-name"><%= task.assignee.nickname %></span>
                   </span>
                 <% end %>
-                <% if task.creator %>
-                  <span class="task-card__reporter" title="Reporter: <%= task.creator.nickname %>">
-                    <%= avatar_tag(task.creator, size: :xs, tooltip: false) %>
-                  </span>
-                <% end %>
               </div>
             </div>
           </article>

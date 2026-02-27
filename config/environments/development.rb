@@ -6,6 +6,9 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.server_timing = true
 
+  # Active Storage
+  config.active_storage.service = :local
+
   # Cache store
   config.cache_store = :memory_store
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }

@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :set_task,  only: %i[show edit update destroy advance_status move]
-  before_action :set_users, only: %i[new edit create update]
+  before_action :set_users, only: %i[show new edit create update]
 
   def index
     all_tasks = Task.includes(:creator, :assignee).ordered
@@ -45,11 +45,15 @@ class TasksController < ApplicationController
 
   def move
     new_status = params[:status]
-    if Task::STATUSES.include?(new_status)
-      @task.update!(status: new_status)
+    unless Task::STATUSES.include?(new_status)
+      return head :unprocessable_entity
+    end
+
+    if @task.update(status: new_status)
       head :ok
     else
-      head :unprocessable_entity
+      render json: { error: @task.errors.full_messages.first },
+             status: :unprocessable_entity
     end
   end
 

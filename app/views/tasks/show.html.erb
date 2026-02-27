@@ -46,13 +46,22 @@
     <div class="task-people">
       <div class="task-people__item">
         <p class="task-people__label">Assignee</p>
-        <% if @task.assignee %>
-          <div class="task-people__user">
-            <%= avatar_tag(@task.assignee, size: :sm) %>
-            <span class="task-people__name"><%= @task.assignee.nickname %></span>
-          </div>
-        <% else %>
-          <p class="task-people__unassigned">Unassigned</p>
+        <%= form_with model: @task, data: { controller: "auto-submit" } do |f| %>
+          <%= f.select :assignee_id,
+                options_for_select(
+                  [["— Unassigned —", ""]] + @users.map { |u| [u.nickname, u.id] },
+                  @task.assignee_id
+                ),
+                {},
+                { class: "form-input form-select assignee-select",
+                  data: { action: "change->auto-submit#submit" } } %>
+        <% end %>
+        <% if current_user && @task.assignee_id != current_user.id %>
+          <%= button_to "Assign to me", task_path(@task),
+                method: :patch,
+                params: { task: { assignee_id: current_user.id } },
+                class: "assign-to-me-btn",
+                form: { class: "assign-to-me-form" } %>
         <% end %>
       </div>
       <div class="task-people__item">
@@ -93,7 +102,7 @@
 
   <% if @task.comments.any? %>
     <div class="comments-list">
-      <% @task.comments.order(created_at: :asc).each do |comment| %>
+      <% @task.comments.order(updated_at: :desc).each do |comment| %>
         <div class="comment">
           <div class="comment__header">
             <%= avatar_tag(comment.user, size: :xs) %>

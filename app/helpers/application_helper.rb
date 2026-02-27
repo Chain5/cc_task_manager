@@ -10,6 +10,8 @@ module ApplicationHelper
 
     if user.nil?
       content_tag(:span, "?", class: "#{css} avatar--unknown", title: "Unknown user")
+    elsif user.photo.attached?
+      image_tag(url_for(user.photo), class: css, alt: user.nickname, title: title)
     elsif user.avatar_url.present?
       image_tag(user.avatar_url, class: css, alt: user.nickname, title: title)
     else

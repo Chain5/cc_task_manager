@@ -1,0 +1,50 @@
+<%#
+  Shared avatar-upload widget.
+  Locals:
+    f           — form builder (required)
+    avatar_url  — current value for the URL field (optional, defaults to f.object.avatar_url)
+%>
+<% avatar_url_value = local_assigns.key?(:avatar_url) ? avatar_url : f.object&.avatar_url %>
+
+<div class="avatar-upload" data-controller="photo-upload">
+
+  <%# ── Upload zone (drag & drop always active) ── %>
+  <div class="dropzone"
+       data-photo-upload-target="dropzone"
+       data-action="dragover->photo-upload#dragOver
+                    dragleave->photo-upload#dragLeave
+                    drop->photo-upload#drop">
+
+    <span class="dropzone__icon" data-photo-upload-target="placeholder">⬆</span>
+    <p class="dropzone__label"   data-photo-upload-target="placeholder">
+      Drag &amp; drop a photo here
+    </p>
+
+    <img src="" alt="Photo preview" class="dropzone__preview"
+         data-photo-upload-target="preview" hidden />
+
+    <%= f.file_field :photo, accept: "image/*", class: "visually-hidden",
+          data: { "photo-upload-target": "input",
+                  action: "change->photo-upload#fileChosen" } %>
+
+    <button type="button" class="btn btn--secondary btn--sm"
+            data-photo-upload-target="uploadBtn"
+            data-action="click->photo-upload#openPicker">
+      Upload photo
+    </button>
+
+    <p class="dropzone__hint">PNG · JPG · WEBP — max 5 MB</p>
+  </div>
+
+  <%# ── URL field — always visible below the dropzone ── %>
+  <div class="avatar-url-row">
+    <%= f.label :avatar_url, "Or use an image URL", class: "form-label" %>
+    <%= f.url_field :avatar_url,
+          value: avatar_url_value,
+          class: "form-input",
+          placeholder: "https://example.com/avatar.png",
+          data: { "photo-upload-target": "urlInput",
+                  action: "input->photo-upload#urlTyped" } %>
+  </div>
+
+</div>

@@ -69,6 +69,26 @@ class UserTest < ActiveSupport::TestCase
 
   # ── Instance methods ───────────────────────────────────────────────────────
 
+  # ── first_name / last_name validations ────────────────────────────────────
+
+  test "first_name longer than 50 characters is invalid" do
+    assert_not build_user(first_name: "A" * 51).valid?
+  end
+
+  test "first_name of exactly 50 characters is valid" do
+    assert build_user(first_name: "A" * 50).valid?
+  end
+
+  test "blank first_name is valid" do
+    assert build_user(first_name: "").valid?
+  end
+
+  test "last_name longer than 50 characters is invalid" do
+    assert_not build_user(last_name: "A" * 51).valid?
+  end
+
+  # ── initials ──────────────────────────────────────────────────────────────
+
   test "initials returns single letter for one-word nickname" do
     assert_equal "A", build_user(nickname: "Alice").initials
   end
@@ -83,6 +103,33 @@ class UserTest < ActiveSupport::TestCase
 
   test "initials are uppercased" do
     assert_equal "AB", build_user(nickname: "alpha beta").initials
+  end
+
+  test "initials prefer first_name and last_name over nickname when set" do
+    user = build_user(nickname: "Anything", first_name: "Jane", last_name: "Doe")
+    assert_equal "JD", user.initials
+  end
+
+  test "initials use only first_name initial when last_name is blank" do
+    user = build_user(nickname: "Anything", first_name: "Jane", last_name: "")
+    assert_equal "J", user.initials
+  end
+
+  # ── display_name ──────────────────────────────────────────────────────────
+
+  test "display_name returns full name when first and last name are set" do
+    user = build_user(first_name: "Jane", last_name: "Doe")
+    assert_equal "Jane Doe", user.display_name
+  end
+
+  test "display_name returns first name only when last name is blank" do
+    user = build_user(first_name: "Jane", last_name: "")
+    assert_equal "Jane", user.display_name
+  end
+
+  test "display_name falls back to nickname when no first or last name" do
+    user = build_user(nickname: "janedoe", first_name: nil, last_name: nil)
+    assert_equal "janedoe", user.display_name
   end
 
   test "avatar_color returns a value from the palette" do

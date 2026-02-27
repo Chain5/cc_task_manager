@@ -109,7 +109,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
 
   # ── move ──────────────────────────────────────────────────────────────────
 
-  test "PATCH move updates task status to a valid value" do
+  test "PATCH move updates task status to a valid forward value" do
     sign_in_as @alice
     patch move_task_path(@task), params: { status: "done" }
     assert_response :ok
@@ -120,5 +120,44 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @alice
     patch move_task_path(@task), params: { status: "invalid" }
     assert_response :unprocessable_entity
+  end
+
+  test "PATCH move rejects regression from in_progress to todo" do
+    sign_in_as @alice
+    task = tasks(:in_progress_task)
+    patch move_task_path(task), params: { status: "todo" }
+    assert_response :unprocessable_entity
+    assert_equal "in_progress", task.reload.status
+  end
+
+  test "PATCH move rejects regression from done to in_progress" do
+    sign_in_as @alice
+    task = tasks(:done_task)
+    patch move_task_path(task), params: { status: "in_progress" }
+    assert_response :unprocessable_entity
+    assert_equal "done", task.reload.status
+  end
+
+  test "PATCH move rejects regression from done to todo" do
+    sign_in_as @alice
+    task = tasks(:done_task)
+    patch move_task_path(task), params: { status: "todo" }
+    assert_response :unprocessable_entity
+    assert_equal "done", task.reload.status
+  end
+
+  test "PATCH move to same status is allowed" do
+    sign_in_as @alice
+    patch move_task_path(@task), params: { status: "todo" }
+    assert_response :ok
+    assert_equal "todo", @task.reload.status
+  end
+
+  test "PATCH move regression response contains an error message" do
+    sign_in_as @alice
+    task = tasks(:done_task)
+    patch move_task_path(task), params: { status: "todo" }
+    json = response.parsed_body
+    assert json["error"].present?, "Response should contain an error key"
   end
 end
