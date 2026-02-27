@@ -1,8 +1,9 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: %i[show edit update destroy advance_status move]
+  before_action :set_task,  only: %i[show edit update destroy advance_status move]
+  before_action :set_users, only: %i[new edit create update]
 
   def index
-    all_tasks = Task.ordered
+    all_tasks = Task.includes(:creator, :assignee).ordered
     @tasks_by_status = Task::STATUSES.index_with { |s| all_tasks.select { |t| t.status == s } }
     @counts = @tasks_by_status.transform_values(&:count)
     @counts["all"] = all_tasks.count
@@ -18,6 +19,7 @@ class TasksController < ApplicationController
 
   def create
     @task = Task.new(task_params)
+    @task.creator = current_user
     if @task.save
       redirect_to @task, notice: "Task created successfully."
     else
@@ -65,7 +67,11 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])
   end
 
+  def set_users
+    @users = User.order(:nickname)
+  end
+
   def task_params
-    params.require(:task).permit(:title, :description, :priority)
+    params.require(:task).permit(:title, :description, :priority, :assignee_id)
   end
 end

@@ -30,6 +30,14 @@
     </div>
 
     <div class="form-group">
+      <%= f.label :assignee_id, "Assignee", class: "form-label" %>
+      <%= f.select :assignee_id,
+            @users.map { |u| [u.nickname, u.id] },
+            { include_blank: "— Unassigned —" },
+            class: "form-input form-select" %>
+    </div>
+
+    <div class="form-group">
       <%= f.label :priority, "Priority", class: "form-label" %>
       <%= f.select :priority,
             Task::PRIORITIES.map { |p| [Task::PRIORITY_LABELS[p], p] },

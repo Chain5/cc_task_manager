@@ -32,6 +32,9 @@ class Task < ApplicationRecord
     "very_low"  => 1
   }.freeze
 
+  belongs_to :creator,  class_name: "User", foreign_key: :creator_id,  optional: true
+  belongs_to :assignee, class_name: "User", foreign_key: :assignee_id, optional: true
+
   has_many :comments, dependent: :destroy
 
   validates :title,    presence:  { message: "cannot be empty" }

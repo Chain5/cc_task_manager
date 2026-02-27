@@ -51,6 +51,19 @@
 
             <div class="task-card__footer">
               <span class="task-meta">&#9679; <%= task.comments.count %> notes</span>
+              <div class="task-card__people">
+                <% if task.assignee %>
+                  <span class="task-card__assignee" title="Assigned to <%= task.assignee.nickname %>">
+                    <%= avatar_tag(task.assignee, size: :xs, tooltip: false) %>
+                    <span class="task-card__assignee-name"><%= task.assignee.nickname %></span>
+                  </span>
+                <% end %>
+                <% if task.creator %>
+                  <span class="task-card__reporter" title="Reporter: <%= task.creator.nickname %>">
+                    <%= avatar_tag(task.creator, size: :xs, tooltip: false) %>
+                  </span>
+                <% end %>
+              </div>
             </div>
           </article>
         <% end %>

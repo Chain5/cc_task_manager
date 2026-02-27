@@ -3,6 +3,7 @@ class CommentsController < ApplicationController
 
   def create
     @comment = @task.comments.build(comment_params)
+    @comment.user = current_user
     if @comment.save
       redirect_to @task, notice: "Note added."
     else

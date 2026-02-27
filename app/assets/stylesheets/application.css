@@ -814,6 +814,154 @@ ul, ol { list-style: none; }
 }
 .form-errors li::before { content: "— "; opacity: 0.5; }
 
+/* ── Avatars ───────────────────────────────────── */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  overflow: hidden;
+  object-fit: cover;
+  letter-spacing: 0;
+  user-select: none;
+}
+.avatar--xs { width: 22px; height: 22px; font-size: 0.52rem; }
+.avatar--sm { width: 30px; height: 30px; font-size: 0.68rem; }
+.avatar--md { width: 40px; height: 40px; font-size: 0.85rem; }
+.avatar--unknown { background: var(--border-2); color: var(--text-muted); }
+
+/* ── Header user menu ──────────────────────────── */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.user-menu__name {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Task card — people row ────────────────────── */
+.task-card__people {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.125rem;
+}
+
+.task-card__assignee {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+}
+.task-card__assignee-name {
+  font-size: 0.67rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+.task-card__reporter {
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+}
+
+/* ── Task detail — people section ──────────────── */
+.task-people {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.task-people__item { display: flex; flex-direction: column; gap: 0.5rem; }
+.task-people__label {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.task-people__user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.task-people__name { font-size: 0.8rem; color: var(--text-dim); }
+.task-people__unassigned { font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+
+/* ── Comment — author row ──────────────────────── */
+.comment__author {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  flex: 1;
+}
+
+/* ── Auth pages ────────────────────────────────── */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem 0;
+}
+
+.auth-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-card__logo {
+  margin-bottom: 1.5rem;
+}
+
+.auth-title {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.375rem;
+}
+
+.auth-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1.75rem;
+  letter-spacing: 0.02em;
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.auth-footer a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 3px; }
+
 /* ── Collapsible columns ───────────────────────── */
 .kanban-column__header-right {
   display: flex;
