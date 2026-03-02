@@ -46,16 +46,41 @@
     <div class="task-people">
       <div class="task-people__item">
         <p class="task-people__label">Assignee</p>
-        <%= form_with model: @task, data: { controller: "auto-submit" } do |f| %>
-          <%= f.select :assignee_id,
-                options_for_select(
-                  [["— Unassigned —", ""]] + @users.map { |u| [u.nickname, u.id] },
-                  @task.assignee_id
-                ),
-                {},
-                { class: "form-input form-select assignee-select",
-                  data: { action: "change->auto-submit#submit" } } %>
-        <% end %>
+
+        <div class="combobox-wrapper" data-controller="combobox">
+          <%# Hidden form — only submitted when a selection is made %>
+          <%= form_with model: @task, data: { combobox_target: "form" } do |f| %>
+            <%= f.hidden_field :assignee_id, data: { combobox_target: "hiddenInput" } %>
+          <% end %>
+
+          <%# Visible search input %>
+          <input type="text"
+                 data-combobox-target="input"
+                 data-action="focus->combobox#open input->combobox#filter keydown->combobox#inputKeydown"
+                 value="<%= @task.assignee&.nickname.to_s %>"
+                 placeholder="— Unassigned —"
+                 autocomplete="off"
+                 class="form-input assignee-search">
+
+          <%# Filterable dropdown %>
+          <div data-combobox-target="dropdown" class="combobox-dropdown" hidden>
+            <div data-combobox-target="option"
+                 data-value=""
+                 data-action="click->combobox#select keydown->combobox#optionKeydown"
+                 class="combobox-option"
+                 tabindex="-1">— Unassigned —</div>
+            <% @users.each do |user| %>
+              <div data-combobox-target="option"
+                   data-value="<%= user.id %>"
+                   data-action="click->combobox#select keydown->combobox#optionKeydown"
+                   class="combobox-option"
+                   tabindex="-1">
+                <%= user.nickname %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
         <% if current_user && @task.assignee_id != current_user.id %>
           <%= button_to "Assign to me", task_path(@task),
                 method: :patch,
